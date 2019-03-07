@@ -1,0 +1,16 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+    config.vm.box = "ubuntu/xenial64"
+
+# Comandos que se ejecutarán en la creación de la máquina.
+# Se actualizará la máquina, y se instalará Java.
+    config.vm.provision "shell", inline: <<-SHELL
+        sudo apt-get update -y
+        sudo apt-get install default-jre -y
+        sudo apt-get install default-jdk -y
+    SHELL
+
+end
