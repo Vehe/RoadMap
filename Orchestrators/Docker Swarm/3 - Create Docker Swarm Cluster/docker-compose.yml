@@ -1,0 +1,14 @@
+version: "3"
+services:
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    deploy:
+      mode: replicated
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
