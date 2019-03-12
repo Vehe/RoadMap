@@ -1,4 +1,4 @@
-#MongoDB y Java
+# MongoDB y Java
 Para comenzar con la práctica necesitamos tener instalado
 - VirtualBox
 - Vagrant
@@ -26,7 +26,7 @@ Pedira datos sobre el usuario que se quiere guardar, y si todo ha ido correctame
 
 Para leer estos datos almacenados, realizaremos el mismo proceso de compilación y ejecutado del programa anterior pero esta vez sobre `ReadPeople.java`
 
-##Referencias
+## Referencias
 - https://www.vagrantup.com/docs/provisioning/shell.html#inline-scripts
 - https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
 - https://www.quackit.com/mongodb/tutorial/mongodb_create_a_database.cfm

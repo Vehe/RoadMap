@@ -1,4 +1,4 @@
-#MongoDB
+# MongoDB
 Iniciar el servicio MongoDB
 >sudo service mongod start
 
@@ -32,5 +32,5 @@ Combinar varios filtros
 Insertar en un determinado collection
 >db.usuarios.insert({titulo:"Prueba", contenido:"Insertar"})
 
-##Referencias
+## Referencias
 - https://docs.mongodb.com/manual/reference/mongo-shell/

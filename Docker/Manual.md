@@ -140,3 +140,142 @@ Filtra los contenedores que tienen el label `user` con valor `scrapbook`.
 ```sh
 $ docker ps --filter "label=user=scrapbook"
 ```
+
+Ejecuta un comando sobre un contenedor que se encuentra funcionando.
+
+```sh
+$ docker exec nginx cat /etc/nginx/conf.d/default.conf
+```
+
+Muestra las estadísticas de un contenedor en concreto. (CPU, RAM, ...)
+
+```sh
+$ docker stats nginx
+```
+
+Varias maneras de ver estadísticas de varios contenedores al mismo tiempo.
+
+```sh
+$ docker ps -q | xargs docker stats
+$ docker stats `docker ps -q`
+```
+
+Muestra información de un contenedor de manera un poco más estética.
+
+```sh
+$ docker ps --format '{{.Names}} container is using {{.Image}} image'
+```
+
+Muestra información de un contenedor en formato de tabla.
+
+```sh
+$ docker ps --format 'table {{.Names}}\t{{.Image}}'
+```
+
+Ver más información mediante el inspect.
+
+```sh
+$ docker inspect --format '{{ .Id }} - {{ .Name }} - {{ .NetworkSettings.IPAddress }}' 5017
+```
+
+Ver más información mediante el inspect.
+
+```sh
+$ docker inspect --format '{{ .Id }} - {{ .Name }} - {{ .NetworkSettings.IPAddress }}' 5017
+```
+
+Iniciamos un Swarm.
+
+```sh
+$ docker swarm init
+```
+
+Nos unimos a un Swarm.
+
+```sh
+$ docker swarm join 172.17.0.27:2377 --token $token
+```
+
+Muestra los nodos que conforman el Swarm (necesitamos ser Manager).
+
+```sh
+$ docker node ls
+```
+
+Creamos una red con el driver `overlay`, la cual nos permite comunicar todos los nodos del Swarm.
+
+```sh
+$ docker network create -d overlay skynet
+```
+
+Crea un servicio http con 2 replicas, en la red `skynet`, estas replicas se reparten en el número de nodos del swarm, bindea el puerto 80 del guest al exterior.
+
+```sh
+$ docker service create --name http --network skynet --replicas 2 -p 80:80 katacoda/docker-http-server
+```
+
+Muesta los servicios que tenemos.
+
+```sh
+$ docker service ls
+```
+
+Comprobamos el estado de un servicio.
+
+```sh
+$ docker service ps http
+```
+
+Vemos información sobre el servicio.
+
+```sh
+$ docker service inspect --pretty http
+```
+
+Vemos las tareas que esta realizando cada nodo.
+
+```sh
+$ docker node ps self
+```
+
+Escala el número de replicas del servicio http, puede ser mayor o menor que la actual.
+
+```sh
+$ docker service scale http=5
+```
+
+Creamos una red en modo `swarm-scoped`, de tal manera que solo los contenedores que estén lanzados como servicio, pueden unirse a esta.
+
+```sh
+$ dodocker network create --attachable -d overlay eg1
+```
+
+Podemos ver la IP virtual asignada a ese contenedor.
+
+```sh
+$ docker service inspect http --format="{{.Endpoint.VirtualIPs}}"
+```
+
+Añade una nueva variable de entorno, a todos los contenedores que conforman el servicio.
+
+```sh
+$ docker service update --env-add KEY=VALUE http
+```
+
+Asigna la CPU y la Memoria que puede consumir el servicio.
+
+```sh
+$ docker service update --limit-cpu 2 --limit-memory 512mb http
+```
+
+Otra forma de crear más réplicas de un servicio.
+
+```sh
+$ docker service update --replicas=6 http
+```
+
+Ejecuta un update, pero con una limitación de 1 en 1 y con un delay entre ellas de 10s.
+
+```sh
+$ docker service update --update-delay=10s --update-parallelism=1 --image katacoda/docker-http-server:v3 http
+```
