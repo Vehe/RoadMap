@@ -1,0 +1,23 @@
+version: '3'
+services:
+    app:
+        image: v3he/javaymongo 
+        command: java People
+        depends_on:
+            - db
+        ports:
+            - "80:9000"
+        deploy:
+            mode: replicated
+            replicas: 5
+            restart_policy:
+                condition: on-failure
+                delay: 30s
+                max_attempts: 3
+    db:
+        image: mongo
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 30s
+                max_attempts: 3
