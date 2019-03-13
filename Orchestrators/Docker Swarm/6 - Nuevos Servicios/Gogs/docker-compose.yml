@@ -1,0 +1,13 @@
+version: '3'
+services:
+    gogs:
+        image: gogs/gogs 
+        depends_on:
+            - db
+        ports:
+            - "3000:3000"
+    db:
+        image: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: gogs
