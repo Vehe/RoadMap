@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: javaymongo-mongodb
+  labels:
+    app: javaymongo
+spec:
+  ports:
+    - port: 27017
+  selector:
+    app: javaymongo
+    tier: mongo
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javaymongo-mongodb
+  labels:
+    app: javaymongo
+spec:
+  selector:
+    matchLabels:
+      app: javaymongo
+      tier: mongo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: javaymongo
+        tier: mongo
+    spec:
+      containers:
+      - image: mongo
+        name: mongo
+        ports:
+        - containerPort: 27017
+          name: mongo

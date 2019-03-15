@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: javaymongo
+  labels:
+    app: javaymongo
+spec:
+  ports:
+    - port: 9000
+  selector:
+    app: javaymongo
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javaymongo
+  labels:
+    app: javaymongo
+spec:
+  selector:
+    matchLabels:
+      app: javaymongo
+      tier: frontend
+  replicas: 4
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: javaymongo
+        tier: frontend
+    spec:
+      containers:
+      - image: v3he/javaymongo:k8s
+        name: javaymongo
+        env:
+        - name: MONGO_DB_HOST
+          value: javaymongo-mongodb
+        ports:
+        - containerPort: 9000
+          name: javaymongo
