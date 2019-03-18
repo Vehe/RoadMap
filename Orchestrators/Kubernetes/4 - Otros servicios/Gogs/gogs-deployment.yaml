@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gogs
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: gogs
+    spec:
+      containers:
+      - resources:
+        name: gogs
+        image: gogs/gogs
+        ports:
+        - name: gogs-port
+          containerPort: 3000
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      volumes:
+      - name: data
+        hostPath:
+          path: /home/centos/gogs/data
