@@ -101,3 +101,9 @@ $ kubectl describe pods [pod_name]
 ```
 
 Solo quedaría desplegar Java de la misma forma que la vez anterior, por lo que no se explica de nuevo.
+
+## Resources 
+- https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-volumes-example-nfs-persistent-volume.html
+- https://www.jorgedelacruz.es/2017/12/26/kubernetes-volumenes-nfs/
+- http://blog.itp-inc.com/deploy-mongodb-cluster-as-a-microservice-on-kubernetes-with-persistent-storage/
+- https://kubernetes.io/docs/concepts/storage/persistent-volumes/
