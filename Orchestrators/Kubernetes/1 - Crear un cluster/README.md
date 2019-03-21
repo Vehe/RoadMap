@@ -6,9 +6,9 @@ Para elegir uno de los dos, tenemos que plantearnos primero que tipo de proyecto
 Docker Swarm está más orientado para entornos simples, que necesitan una puesta en funcionamiento rápida, este también es más sencillo de utilizar, mientras que Kubernetes se orienta hacia entornos con clusters de tamaño medio/grande y aplicaciónes más complejas.
 
 Para iniciar un cluster de Kubernetes primero necesitamos los siguientes requisitos:
-- kubeadm: the command to bootstrap the cluster.
-- kubelet: the component that runs on all of the machines in your cluster and does things like starting pods and containers.
-- kubectl: the command line util to talk to your cluster.
+- kubeadm: Instrucción que nos permite crear el cluster.
+- kubelet: Es el componente de kubernetes que se ejecuta en todos los nodos y es responsable de ejecutar los pods y los contenedores.
+- kubectl: La utilidad de línea de comandos que nos permite controlar el cluster.
 
 ## Crear cluster con Kubernetes
 Vamos a instalarlo en una máquina con SO `CentOS Linux release 7.4.1708 (Core)`.
