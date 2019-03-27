@@ -10,6 +10,13 @@ Kubernetes is a portable, extensible open-source platform for managing container
 Kubernetes provides a container-centric management environment. It orchestrates computing, networking, and storage infrastructure on behalf of user workloads. This provides much of the simplicity of Platform as a Service (PaaS) with the flexibility of Infrastructure as a Service (IaaS), and enables portability across infrastructure providers.
 
 
+## Requisitos mínimos
+
+- 2 GB or more of RAM per machine.
+- 2 CPUs or more
+- Full network connectivity between all machines in the cluster (public or private network is fine)
+
+
 ## Nodes
 A Pod always runs on a Node. A Node is a worker machine in Kubernetes and may be either a virtual or a physical machine, depending on the cluster. Each Node is managed by the Master. A Node can have multiple pods, and the Kubernetes master automatically handles scheduling the pods across the Nodes in the cluster. The Master's automatic scheduling takes into account the available resources on each Node.
 
