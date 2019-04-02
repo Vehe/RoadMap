@@ -1,107 +1,67 @@
-## Nginx Demo sobre MiniShift
+# Nginx Demo in MiniShift Cluster
 
-Como requisitos previos, debemos tener instalado y funcinando `MiniShift` así como el `CLI OC`, los cuales podemos descargar desde los siguientes enlaces:
+Como requisitos previos debemos tener un cluster con MiniShift funcionando.
+Esta vez, al contrario que en el proyecto de `nodejs-demo`, no selecionaremos la imagen desde el `Browse Catalog`, sino que crearemos nuestra propia imagen personalizada, y posteriormente la seleccionaremos.
 
-- https://www.okd.io/minishift/
-- https://docs.okd.io/latest/cli_reference/get_started_cli.html
+## Creación de la imagen
 
-## Inicio
+Usaremos una imagen de `nginx` pero `unprivileged` para que no nos de problemas de permisos en el cluster por el momento.
+(Ya nos meteremos en eso más adelante).
 
-Creamos un nuevo proyecto llamado `nginx-demo-pablo`, mediante la interfaz gáfica.
+Creamos un `Dockerfile` con el siguiente contenido:
+```
+FROM nginxinc/nginx-unprivileged
+COPY . /usr/share/nginx/html
+```
 
-### GUI
+Creamos la imagen, y la subimos al repositorio `v3he/nginx-minishift:unprivileged`.
+Es una simple página personalizada que muestra unas letras en pantalla, no tiene nada más.
 
-![Create Project](img/create-proyect.PNG)
+## Creamos un nuevo proyecto
 
-Vamos a crear un simple `Hello-World` sobre `NodeJs`, para ello, una vez que hemos creado el proyecto sobre el que vamos a trabajar, y estamos dentro, veremos una opción que pone `Browse Catalog`, seleccionaremos esta, y posteriormente, seleccionaremos `NodeJs` sobre las opciones que se nos presentan.
-
-Al seleccionarlo, se nos mostrará un panel de configuración, estableceremos los siguiente datos:
-
-![NodeJs Config](img/create-from-catalog.PNG)
-
-Ese es el repositorio de git desde el cual tomará los archivos que vamos a usar, unicamente contiene un simple index cuyo contenido es un `Hola Mundo` básico.
-
-Una vez que aceptemos todo, podremos ver que se ha creado una build correctamente, ahora ya tenemos un servicio de `NodeJs` funcionando mostrando nuestro `Hello-World`.
-
-Al crearse, se ha creado lo siguiente:
-
-- 1 Pod
-- 1 Deployment Config
-- 1 Servicio
-
-Mediante la interfaz gráfica, podemos ver información sobre estos, por ejemplo, veamos que se muestra sobre el `Deployment`:
-
-![NodeJs Deployment](img/nodejs-deployment.PNG)
-
-Como podemos ver, pone que esta en estado activo, el número `desired` es 1, y esto se cumple, ya que podemos ver que existe 1 Pod. (Más adelante crearemos más replcas sobre este.)
-
-También podemos ver información relevante como podrían ser los `log` y de que pods esta compuesto, así como su estado.
-
-Ahora veamos un podo de información sobre el Pod del que hablamos:
-
-![NodeJs Pod](img/nodejs-pod-status.PNG)
-
-Podemos ver informacíon relevante sobre este, como por ejemplo, el servicio que utiliza para el tráfico interno, así como la ruta que se ha creado para el táfico externo. (Hablaremos sobre Routes en otro momento.)
-
-Si accedeomos a esta `URL` que se nos muestra, veremos que efectivamente, está funcionando correctamente, y que vemos el HELLO WORLD.
-
-![URL Hello World](img/nodejs-web-url.PNG)
-
-Para replicar Pods mediante la interfáz gráfica, es tan sencillo como presionar las flechas hacia `arriba` o `abajo` respectivamente, y en un par de segundos, aumentaremos el número de pods, o lo reduciremos. (Podemos llegar a dejarlo en 0 Pods sin problemas.)
-
-![Pod Replica UI](img/replicate-pods-ui.PNG)
-
-### Console
-
-Es el turno de manejarnos un poco con la consola sobre el proyecto que hemos creado, y en el cual hemos desplegado un NodeJS que actualmente tiene 3 Pods.
-
-Primero, tendremos que hacer login, al servidor `192.168.99.100` el cual es la máquina virutal de `MiniShift`, para ello, ejecutaremos lo siguiente:
+De la misma manera que hicimos en `nodejs-demo`, cramos un nuevo proyecto sobre el que trabajar, si lo queremos hacer por comando, solo tenemos que ejecutar:
 ```sh
-$ oc login --server=192.168.99.100:8443
+$ oc new-project nginx-demo-pablo
 ```
 
-Entramos con las mismas credenciales que a la `GUI`, `developer:admin`.
-Nos cambiaremos para trabajar sobre el proyecto en el cual estabamos en la interfáz gáfica, para ello:
+Esta vez, seleccionaremos `Deploy image`, para crear un deploy a partir de la imagen que nosotros creamos anteriormente.
+
+Seleccionamos la casilla de `Imagen Name`, y escribimos el nombre del repositorio en el que está la imagen (`v3he/nginx-minishift:unprivileged`), a continuación, pulsamos la Lupa para que comience a buscar la imagen.
+
+Si la ha encontrado con exito, nos ofrecerá algunas opciones que podemos modificar, como las variables de entorno, en nuestro caso, no hace falta.
+
+![Imagen Options](img/deploy-image-options.PNG)
+
+Si todo ha ido bien, se debería haber creado un pod con exito, y un service asociado a este.
+El problema ahora, está en que no se ha creado una `Route` automáticamente, por lo que tendremos que crearla a mano, y en este caso, lo hare por consola.
+(Las rutas sirven para exponer un servicio de manera externa.)
+
+Ejecutaremos el siguiente comando:
 ```sh
-$ oc project nodejs-demo-pablo
+$ oc expose svc/nginx-minishift
 ```
 
-Ahora, que ya estamos sobre el proyecto, tenemos acceso a lo mismo que veíamos en la interfáz. Veamos los pods que tenemos con el siguiente comando:
+Donde `nginx-minishift` es el nombre del servicio que esta asociado a ese pod.
+
+Ejecutando el comando:
 ```sh
-$ oc get pods
-```
-El resultado será algo como lo siguiente:
-```
-NAME                        READY     STATUS      RESTARTS   AGE
-nodejs-demo-pablo-1-build   0/1       Completed   0          10m
-nodejs-demo-pablo-1-mg9zp   1/1       Running     0          9m
-nodejs-demo-pablo-1-jf6xn   1/1       Running     0          9m
-nodejs-demo-pablo-1-ud3ss   1/1       Running     0          9m
+$ oc get routes
 ```
 
-Como podemos apreciar, los 3 Pods de los que hablabamos anteriormente, estan con `STATUS Running`, y el otro que vemos, es el Pod que se creó a la hora de realizar la build, como bien indica su nombre.
-
-Para ver los `Deployment Config` que tenemos, solo tenemos que ejecutar el siguiente comando:
-```sh
-$ oc get dc
+Veremos un output similar al siguiente:
+```
+NAME              HOST/PORT                                                SERVICE           LABELS                INSECURE POLICY   TLS TERMINATION
+nginx-minishift   nginx-minishift-nginx-demo-pablo.192.168.99.100.nip.io   nginx-minishift   app=nginx-minishift
 ```
 
-Y para finalizar, veremos los detalles sobre el servicio del que hablamos dentro de los Pods en la GUI, ejecutaremos el siguiente comando:
-```sh
-$ oc describe svc nodejs-demo-pablo
-```
+Asi que podemos ver, que la ruta se ha generado con exito, y que esta asociada al servicio `nginx-minishift`, por lo que si accedemos ahora a la siguiente URL `nginx-minishift-nginx-demo-pablo.192.168.99.100.nip.io`, veremos esto:
 
-Veremos información revante, como podría ser el tipo del servicio, que es `ClusterIP`, y las IP de los Pods, las cuales están en el apartado de `Endpoints`.
+![Nginx Page](img/url.PNG)
 
-```
-Name:                   nodejs-demo-pablo
-Namespace:              nodejs-demo-pablo
-Labels:                 app=nodejs-demo-pablo
-Selector:               deploymentconfig=nodejs-demo-pablo
-Type:                   ClusterIP
-IP:                     172.30.58.221
-Port:                   8080-tcp        8080/TCP
-Endpoints:              172.17.0.11:8080,172.17.0.7:8080,172.17.0.8:8080
-Session Affinity:       None
-No events.
-```
+Al igual que en el proyecto anterior, podemos crear más replicas.
+
+## Resources
+
+- https://hub.docker.com/r/v3he/nginx-minishift
+- https://hub.docker.com/r/nginxinc/nginx-unprivileged
+- https://docs.okd.io/latest/dev_guide/routes.html
