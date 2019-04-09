@@ -24,7 +24,7 @@ $ yum install ansible
 ## Laboratorio
 
 Lo instalaremos en un entorno que consta de varias máquinas:
-- 192.1668.1.17 (La máquina master, donde esta instalado ansible)
+- 192.168.1.17 (La máquina master, donde esta instalado ansible)
 - 192.168.1.6 (Nodo)
 - 192.168.1.7 (Nodo)
 
