@@ -1,0 +1,14 @@
+---
+- name: Cambiar el index por defecto de apache
+  hosts: openstack
+  tasks:
+
+  - name: Copia el nuevo index al directorio web de apache
+    template:
+      src: index.html
+      dest: /var/www/html/index.html
+
+  - name: Reiniciar el servicio de apache
+    service:
+      name: httpd 
+      state: restarted

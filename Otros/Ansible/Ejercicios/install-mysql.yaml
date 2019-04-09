@@ -1,0 +1,19 @@
+---
+- name: Añadir el repositorio de MySQL e instalar este
+  hosts: openstack
+  tasks:
+
+  - name: Añadir la repo de MySQL
+    yum: 
+      name: http://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+      state: present
+
+  - name: Instalar MySQL 5.7
+    yum:
+      name: mysql-server
+      state: present
+
+  - name: Iniciar el servicio mysqld
+    service:
+       name: mysqld
+       state: started

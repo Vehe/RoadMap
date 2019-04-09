@@ -1,0 +1,14 @@
+---
+- name: Instalar y poner en funcionamiento Apache2
+  hosts: openstack
+  tasks:
+
+  - name: Instalar el paquete de apache
+    yum:
+      name: httpd
+      state: present
+
+  - name: Iniciar el servicio httpd
+    service:
+      name: httpd 
+      state: started
